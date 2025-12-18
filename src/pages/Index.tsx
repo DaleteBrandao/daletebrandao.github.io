@@ -4,11 +4,13 @@ import { RevenueBreakdown } from '@/components/RevenueBreakdown';
 import { TransactionForm } from '@/components/TransactionForm';
 import { TransactionTable } from '@/components/TransactionTable';
 import { MonthSelector } from '@/components/MonthSelector';
+import { FinanceChart } from '@/components/FinanceChart';
 import { TrendingUp, TrendingDown, Wallet, PiggyBank } from 'lucide-react';
 
 const Index = () => {
   const {
     transactions,
+    allTransactions,
     addTransaction,
     removeTransaction,
     selectedMonth,
@@ -69,6 +71,11 @@ const Index = () => {
             variant="accent"
             delay={300}
           />
+        </section>
+
+        {/* Finance Chart */}
+        <section>
+          <FinanceChart transactions={allTransactions} />
         </section>
 
         {/* Revenue Breakdown & Form */}
