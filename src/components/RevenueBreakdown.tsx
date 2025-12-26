@@ -1,13 +1,14 @@
-import { Banknote, CreditCard, Smartphone } from 'lucide-react';
+import { Banknote, CreditCard, Smartphone, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface RevenueBreakdownProps {
   dinheiro: number;
   cartao: number;
-  ixpressum: number;
+  pix: number;
+  boleto: number;
 }
 
-export function RevenueBreakdown({ dinheiro, cartao, ixpressum }: RevenueBreakdownProps) {
+export function RevenueBreakdown({ dinheiro, cartao, pix, boleto }: RevenueBreakdownProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -15,13 +16,14 @@ export function RevenueBreakdown({ dinheiro, cartao, ixpressum }: RevenueBreakdo
     }).format(amount);
   };
 
-  const total = dinheiro + cartao + ixpressum;
+  const total = dinheiro + cartao + pix + boleto;
   const getPercentage = (value: number) => total > 0 ? ((value / total) * 100).toFixed(1) : '0';
 
   const items = [
     { label: 'Dinheiro', value: dinheiro, icon: Banknote, colorClass: 'bg-cash', textClass: 'text-cash' },
     { label: 'Cartão', value: cartao, icon: CreditCard, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
-    { label: 'IXpressum', value: ixpressum, icon: Smartphone, colorClass: 'bg-ixpressum', textClass: 'text-ixpressum' },
+    { label: 'PIX', value: pix, icon: Smartphone, colorClass: 'bg-pix', textClass: 'text-pix' },
+    { label: 'Boleto', value: boleto, icon: FileText, colorClass: 'bg-boleto', textClass: 'text-boleto' },
   ];
 
   return (

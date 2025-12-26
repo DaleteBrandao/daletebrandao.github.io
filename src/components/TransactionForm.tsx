@@ -87,7 +87,8 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
               <SelectContent>
                 <SelectItem value="dinheiro">Dinheiro</SelectItem>
                 <SelectItem value="cartao">Cartão</SelectItem>
-                <SelectItem value="ixpressum">IXpressum</SelectItem>
+                <SelectItem value="pix">PIX</SelectItem>
+                <SelectItem value="boleto">Boleto</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -1,30 +1,132 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Transaction, PaymentMethod, MonthlyData } from '@/types/finance';
-
-const generateId = () => Math.random().toString(36).substring(2, 9);
-
-const initialTransactions: Transaction[] = [
-  { id: generateId(), date: '2024-01-05', description: 'Vendas do dia', type: 'receita', amount: 2500, paymentMethod: 'cartao' },
-  { id: generateId(), date: '2024-01-05', description: 'Vendas em dinheiro', type: 'receita', amount: 800, paymentMethod: 'dinheiro' },
-  { id: generateId(), date: '2024-01-06', description: 'Pedidos IXpressum', type: 'receita', amount: 1200, paymentMethod: 'ixpressum' },
-  { id: generateId(), date: '2024-01-07', description: 'Fornecedor de peixe', type: 'despesa', amount: 1500 },
-  { id: generateId(), date: '2024-01-08', description: 'Conta de luz', type: 'despesa', amount: 450 },
-  { id: generateId(), date: '2024-01-10', description: 'Vendas cartão', type: 'receita', amount: 3200, paymentMethod: 'cartao' },
-  { id: generateId(), date: '2024-01-12', description: 'Salários', type: 'despesa', amount: 4500 },
-  { id: generateId(), date: '2024-01-15', description: 'Vendas em dinheiro', type: 'receita', amount: 950, paymentMethod: 'dinheiro' },
-];
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { Transaction, PaymentMethod } from '@/types/finance';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export function useFinanceData() {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [selectedMonth, setSelectedMonth] = useState<string>('2024-01');
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const addTransaction = useCallback((transaction: Omit<Transaction, 'id'>) => {
-    setTransactions(prev => [...prev, { ...transaction, id: generateId() }]);
-  }, []);
+  // Fetch transactions from database
+  const fetchTransactions = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('date', { ascending: false });
 
-  const removeTransaction = useCallback((id: string) => {
-    setTransactions(prev => prev.filter(t => t.id !== id));
-  }, []);
+      if (error) throw error;
+
+      const formattedTransactions: Transaction[] = (data || []).map(t => ({
+        id: t.id,
+        user_id: t.user_id,
+        date: t.date,
+        description: t.description,
+        type: t.type as 'receita' | 'despesa',
+        amount: Number(t.amount),
+        paymentMethod: t.payment_method as PaymentMethod | undefined,
+      }));
+
+      setTransactions(formattedTransactions);
+    } catch (error: any) {
+      console.error('Erro ao carregar transações:', error);
+      toast({
+        title: 'Erro ao carregar',
+        description: 'Não foi possível carregar as transações.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  const addTransaction = useCallback(async (transaction: Omit<Transaction, 'id'>) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: 'Erro',
+          description: 'Você precisa estar logado para adicionar transações.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: user.id,
+          description: transaction.description,
+          amount: transaction.amount,
+          type: transaction.type,
+          payment_method: transaction.paymentMethod,
+          date: transaction.date,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newTransaction: Transaction = {
+        id: data.id,
+        user_id: data.user_id,
+        date: data.date,
+        description: data.description,
+        type: data.type as 'receita' | 'despesa',
+        amount: Number(data.amount),
+        paymentMethod: data.payment_method as PaymentMethod | undefined,
+      };
+
+      setTransactions(prev => [newTransaction, ...prev]);
+      
+      toast({
+        title: 'Sucesso',
+        description: 'Transação adicionada com sucesso!',
+      });
+    } catch (error: any) {
+      console.error('Erro ao adicionar transação:', error);
+      toast({
+        title: 'Erro ao adicionar',
+        description: error.message || 'Não foi possível adicionar a transação.',
+        variant: 'destructive',
+      });
+    }
+  }, [toast]);
+
+  const removeTransaction = useCallback(async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setTransactions(prev => prev.filter(t => t.id !== id));
+      
+      toast({
+        title: 'Sucesso',
+        description: 'Transação removida com sucesso!',
+      });
+    } catch (error: any) {
+      console.error('Erro ao remover transação:', error);
+      toast({
+        title: 'Erro ao remover',
+        description: error.message || 'Não foi possível remover a transação.',
+        variant: 'destructive',
+      });
+    }
+  }, [toast]);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => t.date.startsWith(selectedMonth));
@@ -35,7 +137,8 @@ export function useFinanceData() {
     return {
       dinheiro: receitas.filter(t => t.paymentMethod === 'dinheiro').reduce((sum, t) => sum + t.amount, 0),
       cartao: receitas.filter(t => t.paymentMethod === 'cartao').reduce((sum, t) => sum + t.amount, 0),
-      ixpressum: receitas.filter(t => t.paymentMethod === 'ixpressum').reduce((sum, t) => sum + t.amount, 0),
+      pix: receitas.filter(t => t.paymentMethod === 'pix').reduce((sum, t) => sum + t.amount, 0),
+      boleto: receitas.filter(t => t.paymentMethod === 'boleto').reduce((sum, t) => sum + t.amount, 0),
     };
   }, [filteredTransactions]);
 
@@ -67,5 +170,6 @@ export function useFinanceData() {
     setSelectedMonth,
     receitasPorMetodo,
     totals,
+    loading,
   };
 }
