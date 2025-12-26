@@ -57,7 +57,8 @@ export default {
         },
         cash: "hsl(var(--cash))",
         cardPayment: "hsl(var(--card-payment))",
-        ixpressum: "hsl(var(--ixpressum))",
+        pix: "hsl(var(--pix))",
+        boleto: "hsl(var(--boleto))",
       },
       borderRadius: {
         lg: "var(--radius)",

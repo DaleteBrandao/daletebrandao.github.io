@@ -1,7 +1,8 @@
-export type PaymentMethod = 'dinheiro' | 'cartao' | 'ixpressum';
+export type PaymentMethod = 'dinheiro' | 'cartao' | 'pix' | 'boleto';
 
 export interface Transaction {
   id: string;
+  user_id?: string;
   date: string;
   description: string;
   type: 'receita' | 'despesa';

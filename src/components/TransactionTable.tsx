@@ -1,7 +1,7 @@
 import { Transaction } from '@/types/finance';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Trash2, TrendingUp, TrendingDown, Banknote, CreditCard, Smartphone } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, Banknote, CreditCard, Smartphone, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TransactionTableProps {
@@ -28,10 +28,27 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
         return <Banknote className="h-4 w-4 text-cash" />;
       case 'cartao':
         return <CreditCard className="h-4 w-4 text-cardPayment" />;
-      case 'ixpressum':
-        return <Smartphone className="h-4 w-4 text-ixpressum" />;
+      case 'pix':
+        return <Smartphone className="h-4 w-4 text-pix" />;
+      case 'boleto':
+        return <FileText className="h-4 w-4 text-boleto" />;
       default:
         return null;
+    }
+  };
+
+  const getPaymentLabel = (method?: string) => {
+    switch (method) {
+      case 'dinheiro':
+        return 'Dinheiro';
+      case 'cartao':
+        return 'Cartão';
+      case 'pix':
+        return 'PIX';
+      case 'boleto':
+        return 'Boleto';
+      default:
+        return method;
     }
   };
 
@@ -92,7 +109,7 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
                     {transaction.paymentMethod ? (
                       <span className="inline-flex items-center gap-1.5">
                         {getPaymentIcon(transaction.paymentMethod)}
-                        <span className="text-sm capitalize">{transaction.paymentMethod}</span>
+                        <span className="text-sm">{getPaymentLabel(transaction.paymentMethod)}</span>
                       </span>
                     ) : (
                       <span className="text-muted-foreground">-</span>
