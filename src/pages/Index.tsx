@@ -139,7 +139,6 @@ const Index = () => {
                 cartao={receitasPorMetodo.cartao}
                 pix={receitasPorMetodo.pix}
                 boleto={receitasPorMetodo.boleto}
-                ixpressum={receitasPorMetodo.ixpressum}
               />
               <TransactionForm onAdd={addTransaction} selectedMonth={selectedMonth} />
             </section>

@@ -32,8 +32,6 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
         return <Smartphone className="h-4 w-4 text-pix" />;
       case 'boleto':
         return <FileText className="h-4 w-4 text-boleto" />;
-      case 'ixpressum':
-        return <Smartphone className="h-4 w-4 text-ixpressum" />;
       default:
         return null;
     }
@@ -49,8 +47,6 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
         return 'PIX';
       case 'boleto':
         return 'Boleto';
-      case 'ixpressum':
-        return 'IXpressum';
       default:
         return method;
     }
