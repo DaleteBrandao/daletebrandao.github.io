@@ -11,9 +11,9 @@ interface SummaryCardProps {
 
 export function SummaryCard({ title, value, icon: Icon, variant = 'default', delay = 0 }: SummaryCardProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
+    return new Intl.NumberFormat('de-DE', {
       style: 'currency',
-      currency: 'BRL',
+      currency: 'EUR',
     }).format(amount);
   };
 

@@ -1,4 +1,4 @@
-export type PaymentMethod = 'dinheiro' | 'cartao' | 'pix' | 'boleto';
+export type PaymentMethod = 'dinheiro' | 'cartao' | 'pix' | 'boleto' | 'ixpressum';
 
 export interface Transaction {
   id: string;

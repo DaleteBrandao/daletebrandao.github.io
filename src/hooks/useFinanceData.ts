@@ -139,6 +139,7 @@ export function useFinanceData() {
       cartao: receitas.filter(t => t.paymentMethod === 'cartao').reduce((sum, t) => sum + t.amount, 0),
       pix: receitas.filter(t => t.paymentMethod === 'pix').reduce((sum, t) => sum + t.amount, 0),
       boleto: receitas.filter(t => t.paymentMethod === 'boleto').reduce((sum, t) => sum + t.amount, 0),
+      ixpressum: receitas.filter(t => t.paymentMethod === 'ixpressum').reduce((sum, t) => sum + t.amount, 0),
     };
   }, [filteredTransactions]);
 
