@@ -59,6 +59,7 @@ export default {
         cardPayment: "hsl(var(--card-payment))",
         pix: "hsl(var(--pix))",
         boleto: "hsl(var(--boleto))",
+        ixpressum: "hsl(var(--ixpressum))",
       },
       borderRadius: {
         lg: "var(--radius)",

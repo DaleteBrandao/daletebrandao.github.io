@@ -11,9 +11,9 @@ interface TransactionTableProps {
 
 export function TransactionTable({ transactions, onRemove }: TransactionTableProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('pt-BR', {
+    return new Intl.NumberFormat('de-DE', {
       style: 'currency',
-      currency: 'BRL',
+      currency: 'EUR',
     }).format(amount);
   };
 
@@ -32,6 +32,8 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
         return <Smartphone className="h-4 w-4 text-pix" />;
       case 'boleto':
         return <FileText className="h-4 w-4 text-boleto" />;
+      case 'ixpressum':
+        return <Smartphone className="h-4 w-4 text-ixpressum" />;
       default:
         return null;
     }
@@ -47,6 +49,8 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
         return 'PIX';
       case 'boleto':
         return 'Boleto';
+      case 'ixpressum':
+        return 'IXpressum';
       default:
         return method;
     }

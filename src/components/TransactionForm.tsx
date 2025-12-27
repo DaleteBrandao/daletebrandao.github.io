@@ -89,13 +89,14 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
                 <SelectItem value="cartao">Cartão</SelectItem>
                 <SelectItem value="pix">PIX</SelectItem>
                 <SelectItem value="boleto">Boleto</SelectItem>
+                <SelectItem value="ixpressum">IXpressum</SelectItem>
               </SelectContent>
             </Select>
           </div>
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="amount">Valor (R$)</Label>
+          <Label htmlFor="amount">Valor (€)</Label>
           <Input
             id="amount"
             type="number"
