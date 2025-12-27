@@ -7,9 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Transaction, PaymentMethod } from '@/types/finance';
+import { Transaction, PaymentMethod, ExpenseCategory } from '@/types/finance';
 import { Plus, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const EXPENSE_CATEGORIES: { value: ExpenseCategory; label: string }[] = [
+  { value: 'vendas_restaurante', label: 'Vendas Restaurante' },
+  { value: 'vendas_ixpressum', label: 'Vendas IXpressum' },
+  { value: 'outros', label: 'Outros' },
+];
 
 interface TransactionFormProps {
   onAdd: (transaction: Omit<Transaction, 'id'>) => void;
@@ -18,6 +24,8 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) {
   const [description, setDescription] = useState('');
+  const [customDescription, setCustomDescription] = useState('');
+  const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>('vendas_restaurante');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'receita' | 'despesa'>('receita');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cartao');
@@ -25,19 +33,25 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description || !amount || !selectedDate) return;
+    
+    const finalDescription = type === 'despesa' 
+      ? (expenseCategory === 'outros' ? customDescription : EXPENSE_CATEGORIES.find(c => c.value === expenseCategory)?.label || '')
+      : description;
+    
+    if (!finalDescription || !amount || !selectedDate) return;
 
     const formattedDate = format(selectedDate, 'yyyy-MM-dd');
     
     onAdd({
       date: formattedDate,
-      description,
+      description: finalDescription,
       type,
       amount: parseFloat(amount),
       paymentMethod: paymentMethod,
     });
 
     setDescription('');
+    setCustomDescription('');
     setAmount('');
     setSelectedDate(new Date());
   };
@@ -76,13 +90,37 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
 
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="description">Descrição</Label>
-          <Input
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Ex: Vendas do dia"
-            className="bg-background"
-          />
+          {type === 'despesa' ? (
+            <div className="space-y-2">
+              <Select value={expenseCategory} onValueChange={(v: ExpenseCategory) => setExpenseCategory(v)}>
+                <SelectTrigger className="bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {EXPENSE_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {expenseCategory === 'outros' && (
+                <Input
+                  id="customDescription"
+                  value={customDescription}
+                  onChange={(e) => setCustomDescription(e.target.value)}
+                  placeholder="Descreva a despesa"
+                  className="bg-background"
+                />
+              )}
+            </div>
+          ) : (
+            <Input
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Ex: Vendas do dia"
+              className="bg-background"
+            />
+          )}
         </div>
 
         <div className="space-y-2">
@@ -109,7 +147,6 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
               <SelectItem value="cartao">Cartão</SelectItem>
               <SelectItem value="pix">PIX</SelectItem>
               <SelectItem value="boleto">Boleto</SelectItem>
-              <SelectItem value="ixpressum">IXpressum</SelectItem>
             </SelectContent>
           </Select>
         </div>

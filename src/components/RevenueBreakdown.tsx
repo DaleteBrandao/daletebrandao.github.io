@@ -6,10 +6,9 @@ interface RevenueBreakdownProps {
   cartao: number;
   pix: number;
   boleto: number;
-  ixpressum: number;
 }
 
-export function RevenueBreakdown({ dinheiro, cartao, pix, boleto, ixpressum }: RevenueBreakdownProps) {
+export function RevenueBreakdown({ dinheiro, cartao, pix, boleto }: RevenueBreakdownProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
       style: 'currency',
@@ -17,7 +16,7 @@ export function RevenueBreakdown({ dinheiro, cartao, pix, boleto, ixpressum }: R
     }).format(amount);
   };
 
-  const total = dinheiro + cartao + pix + boleto + ixpressum;
+  const total = dinheiro + cartao + pix + boleto;
   const getPercentage = (value: number) => total > 0 ? ((value / total) * 100).toFixed(1) : '0';
 
   const items = [
@@ -25,7 +24,6 @@ export function RevenueBreakdown({ dinheiro, cartao, pix, boleto, ixpressum }: R
     { label: 'Cartão', value: cartao, icon: CreditCard, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
     { label: 'PIX', value: pix, icon: Smartphone, colorClass: 'bg-pix', textClass: 'text-pix' },
     { label: 'Boleto', value: boleto, icon: FileText, colorClass: 'bg-boleto', textClass: 'text-boleto' },
-    { label: 'IXpressum', value: ixpressum, icon: Smartphone, colorClass: 'bg-ixpressum', textClass: 'text-ixpressum' },
   ];
 
   return (

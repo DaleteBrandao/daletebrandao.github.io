@@ -1,4 +1,6 @@
-export type PaymentMethod = 'dinheiro' | 'cartao' | 'pix' | 'boleto' | 'ixpressum';
+export type PaymentMethod = 'dinheiro' | 'cartao' | 'pix' | 'boleto';
+
+export type ExpenseCategory = 'vendas_restaurante' | 'vendas_ixpressum' | 'outros';
 
 export interface Transaction {
   id: string;
