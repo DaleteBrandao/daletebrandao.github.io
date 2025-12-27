@@ -1,10 +1,15 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
+import { pt } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { Transaction, PaymentMethod } from '@/types/finance';
-import { Plus } from 'lucide-react';
+import { Plus, CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TransactionFormProps {
   onAdd: (transaction: Omit<Transaction, 'id'>) => void;
@@ -16,23 +21,25 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'receita' | 'despesa'>('receita');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cartao');
-  const [day, setDay] = useState('01');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description || !amount) return;
+    if (!description || !amount || !selectedDate) return;
 
+    const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+    
     onAdd({
-      date: `${selectedMonth}-${day.padStart(2, '0')}`,
+      date: formattedDate,
       description,
       type,
       amount: parseFloat(amount),
-      paymentMethod: type === 'receita' ? paymentMethod : undefined,
+      paymentMethod: paymentMethod,
     });
 
     setDescription('');
     setAmount('');
-    setDay('01');
+    setSelectedDate(new Date());
   };
 
   return (
@@ -41,16 +48,30 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
       
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <div className="space-y-2">
-          <Label htmlFor="day">Dia</Label>
-          <Input
-            id="day"
-            type="number"
-            min="1"
-            max="31"
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            className="bg-background"
-          />
+          <Label>Data</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal bg-background",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "dd/MM/yyyy", { locale: pt }) : <span>Selecione uma data</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                initialFocus
+                className="pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="space-y-2 sm:col-span-2">
@@ -77,23 +98,21 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
           </Select>
         </div>
 
-        {type === 'receita' && (
-          <div className="space-y-2">
-            <Label htmlFor="payment">Método</Label>
-            <Select value={paymentMethod} onValueChange={(v: PaymentMethod) => setPaymentMethod(v)}>
-              <SelectTrigger className="bg-background">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                <SelectItem value="cartao">Cartão</SelectItem>
-                <SelectItem value="pix">PIX</SelectItem>
-                <SelectItem value="boleto">Boleto</SelectItem>
-                <SelectItem value="ixpressum">IXpressum</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        <div className="space-y-2">
+          <Label htmlFor="payment">Método</Label>
+          <Select value={paymentMethod} onValueChange={(v: PaymentMethod) => setPaymentMethod(v)}>
+            <SelectTrigger className="bg-background">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dinheiro">Dinheiro</SelectItem>
+              <SelectItem value="cartao">Cartão</SelectItem>
+              <SelectItem value="pix">PIX</SelectItem>
+              <SelectItem value="boleto">Boleto</SelectItem>
+              <SelectItem value="ixpressum">IXpressum</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="amount">Valor (€)</Label>
