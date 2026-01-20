@@ -7,13 +7,31 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Transaction, PaymentMethod, ExpenseCategory } from '@/types/finance';
+import { Transaction, PaymentMethod } from '@/types/finance';
 import { Plus, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const EXPENSE_CATEGORIES: { value: ExpenseCategory; label: string }[] = [
+type IncomeCategory = 'vendas_restaurante' | 'vendas_ixpressum' | 'outros';
+type ExpenseCategory = 'mercado' | 'peixe' | 'refrielvas' | 'energia' | 'agua' | 'internet' | 'seguranca_social' | 'salario' | 'freelancer' | 'chines' | 'decoracao' | 'outros';
+
+const INCOME_CATEGORIES: { value: IncomeCategory; label: string }[] = [
   { value: 'vendas_restaurante', label: 'Vendas Restaurante' },
   { value: 'vendas_ixpressum', label: 'Vendas IXpressum' },
+  { value: 'outros', label: 'Outros' },
+];
+
+const EXPENSE_CATEGORIES: { value: ExpenseCategory; label: string }[] = [
+  { value: 'mercado', label: 'Mercado' },
+  { value: 'peixe', label: 'Peixe' },
+  { value: 'refrielvas', label: 'Refrielvas' },
+  { value: 'energia', label: 'Energia' },
+  { value: 'agua', label: 'Água' },
+  { value: 'internet', label: 'Internet' },
+  { value: 'seguranca_social', label: 'Segurança Social' },
+  { value: 'salario', label: 'Salário' },
+  { value: 'freelancer', label: 'Freelancer' },
+  { value: 'chines', label: 'Chinês' },
+  { value: 'decoracao', label: 'Decoração' },
   { value: 'outros', label: 'Outros' },
 ];
 
@@ -23,9 +41,9 @@ interface TransactionFormProps {
 }
 
 export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) {
-  const [description, setDescription] = useState('');
   const [customDescription, setCustomDescription] = useState('');
-  const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>('vendas_restaurante');
+  const [incomeCategory, setIncomeCategory] = useState<IncomeCategory>('vendas_restaurante');
+  const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>('mercado');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<'receita' | 'despesa'>('receita');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cartao');
@@ -34,9 +52,16 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const finalDescription = type === 'despesa' 
-      ? (expenseCategory === 'outros' ? customDescription : EXPENSE_CATEGORIES.find(c => c.value === expenseCategory)?.label || '')
-      : description;
+    let finalDescription = '';
+    if (type === 'receita') {
+      finalDescription = incomeCategory === 'outros' 
+        ? customDescription 
+        : INCOME_CATEGORIES.find(c => c.value === incomeCategory)?.label || '';
+    } else {
+      finalDescription = expenseCategory === 'outros' 
+        ? customDescription 
+        : EXPENSE_CATEGORIES.find(c => c.value === expenseCategory)?.label || '';
+    }
     
     if (!finalDescription || !amount || !selectedDate) return;
 
@@ -50,7 +75,6 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
       paymentMethod: paymentMethod,
     });
 
-    setDescription('');
     setCustomDescription('');
     setAmount('');
     setSelectedDate(new Date());
@@ -90,8 +114,19 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
 
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="description">Descrição</Label>
-          {type === 'despesa' ? (
-            <div className="space-y-2">
+          <div className="space-y-2">
+            {type === 'receita' ? (
+              <Select value={incomeCategory} onValueChange={(v: IncomeCategory) => setIncomeCategory(v)}>
+                <SelectTrigger className="bg-background">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {INCOME_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
               <Select value={expenseCategory} onValueChange={(v: ExpenseCategory) => setExpenseCategory(v)}>
                 <SelectTrigger className="bg-background">
                   <SelectValue />
@@ -102,25 +137,17 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
                   ))}
                 </SelectContent>
               </Select>
-              {expenseCategory === 'outros' && (
-                <Input
-                  id="customDescription"
-                  value={customDescription}
-                  onChange={(e) => setCustomDescription(e.target.value)}
-                  placeholder="Descreva a despesa"
-                  className="bg-background"
-                />
-              )}
-            </div>
-          ) : (
-            <Input
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Ex: Vendas do dia"
-              className="bg-background"
-            />
-          )}
+            )}
+            {((type === 'receita' && incomeCategory === 'outros') || (type === 'despesa' && expenseCategory === 'outros')) && (
+              <Input
+                id="customDescription"
+                value={customDescription}
+                onChange={(e) => setCustomDescription(e.target.value)}
+                placeholder={type === 'receita' ? "Descreva a receita" : "Descreva a despesa"}
+                className="bg-background"
+              />
+            )}
+          </div>
         </div>
 
         <div className="space-y-2">
