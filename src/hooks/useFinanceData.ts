@@ -142,6 +142,16 @@ export function useFinanceData() {
     };
   }, [filteredTransactions]);
 
+  const despesasPorMetodo = useMemo(() => {
+    const despesas = filteredTransactions.filter(t => t.type === 'despesa');
+    return {
+      dinheiro: despesas.filter(t => t.paymentMethod === 'dinheiro').reduce((sum, t) => sum + t.amount, 0),
+      cartao: despesas.filter(t => t.paymentMethod === 'cartao').reduce((sum, t) => sum + t.amount, 0),
+      pix: despesas.filter(t => t.paymentMethod === 'pix').reduce((sum, t) => sum + t.amount, 0),
+      boleto: despesas.filter(t => t.paymentMethod === 'boleto').reduce((sum, t) => sum + t.amount, 0),
+    };
+  }, [filteredTransactions]);
+
   const totals = useMemo(() => {
     const totalReceitas = filteredTransactions.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.amount, 0);
     const totalDespesas = filteredTransactions.filter(t => t.type === 'despesa').reduce((sum, t) => sum + t.amount, 0);
@@ -169,6 +179,7 @@ export function useFinanceData() {
     selectedMonth,
     setSelectedMonth,
     receitasPorMetodo,
+    despesasPorMetodo,
     totals,
     loading,
   };

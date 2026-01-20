@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { SummaryCard } from '@/components/SummaryCard';
 import { RevenueBreakdown } from '@/components/RevenueBreakdown';
+import { ExpenseBreakdown } from '@/components/ExpenseBreakdown';
 import { TransactionForm } from '@/components/TransactionForm';
 import { TransactionTable } from '@/components/TransactionTable';
 import { MonthSelector } from '@/components/MonthSelector';
@@ -25,6 +26,7 @@ const Index = () => {
     selectedMonth,
     setSelectedMonth,
     receitasPorMetodo,
+    despesasPorMetodo,
     totals,
     loading,
   } = useFinanceData();
@@ -132,7 +134,7 @@ const Index = () => {
               <FinanceChart transactions={allTransactions} />
             </section>
 
-            {/* Revenue Breakdown & Form */}
+            {/* Breakdowns */}
             <section className="grid gap-6 lg:grid-cols-2">
               <RevenueBreakdown
                 dinheiro={receitasPorMetodo.dinheiro}
@@ -140,6 +142,16 @@ const Index = () => {
                 pix={receitasPorMetodo.pix}
                 boleto={receitasPorMetodo.boleto}
               />
+              <ExpenseBreakdown
+                dinheiro={despesasPorMetodo.dinheiro}
+                cartao={despesasPorMetodo.cartao}
+                pix={despesasPorMetodo.pix}
+                boleto={despesasPorMetodo.boleto}
+              />
+            </section>
+
+            {/* Transaction Form */}
+            <section>
               <TransactionForm onAdd={addTransaction} selectedMonth={selectedMonth} />
             </section>
 
