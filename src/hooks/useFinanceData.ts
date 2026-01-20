@@ -142,14 +142,20 @@ export function useFinanceData() {
     };
   }, [filteredTransactions]);
 
-  const despesasPorMetodo = useMemo(() => {
+  const despesasPorDescricao = useMemo(() => {
     const despesas = filteredTransactions.filter(t => t.type === 'despesa');
-    return {
-      dinheiro: despesas.filter(t => t.paymentMethod === 'dinheiro').reduce((sum, t) => sum + t.amount, 0),
-      cartao: despesas.filter(t => t.paymentMethod === 'cartao').reduce((sum, t) => sum + t.amount, 0),
-      pix: despesas.filter(t => t.paymentMethod === 'pix').reduce((sum, t) => sum + t.amount, 0),
-      boleto: despesas.filter(t => t.paymentMethod === 'boleto').reduce((sum, t) => sum + t.amount, 0),
-    };
+    const categorias = ['Mercado', 'Peixe', 'Refrielvas', 'Energia', 'Água', 'Internet', 'Segurança Social', 'Salário', 'Freelancer', 'Chinês', 'Decoração', 'Outros'];
+    
+    const result: Record<string, number> = {};
+    categorias.forEach(cat => {
+      result[cat] = despesas.filter(t => t.description === cat).reduce((sum, t) => sum + t.amount, 0);
+    });
+    
+    // Add any transactions with descriptions not in the list to "Outros"
+    const outrasDescricoes = despesas.filter(t => !categorias.includes(t.description));
+    result['Outros'] += outrasDescricoes.reduce((sum, t) => sum + t.amount, 0);
+    
+    return result;
   }, [filteredTransactions]);
 
   const totals = useMemo(() => {
@@ -179,7 +185,7 @@ export function useFinanceData() {
     selectedMonth,
     setSelectedMonth,
     receitasPorMetodo,
-    despesasPorMetodo,
+    despesasPorDescricao,
     totals,
     loading,
   };

@@ -26,7 +26,7 @@ const Index = () => {
     selectedMonth,
     setSelectedMonth,
     receitasPorMetodo,
-    despesasPorMetodo,
+    despesasPorDescricao,
     totals,
     loading,
   } = useFinanceData();
@@ -142,12 +142,7 @@ const Index = () => {
                 pix={receitasPorMetodo.pix}
                 boleto={receitasPorMetodo.boleto}
               />
-              <ExpenseBreakdown
-                dinheiro={despesasPorMetodo.dinheiro}
-                cartao={despesasPorMetodo.cartao}
-                pix={despesasPorMetodo.pix}
-                boleto={despesasPorMetodo.boleto}
-              />
+              <ExpenseBreakdown despesas={despesasPorDescricao} />
             </section>
 
             {/* Transaction Form */}
