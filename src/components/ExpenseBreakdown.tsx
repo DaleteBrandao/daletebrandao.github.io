@@ -1,0 +1,70 @@
+import { Banknote, CreditCard, Smartphone, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface ExpenseBreakdownProps {
+  dinheiro: number;
+  cartao: number;
+  pix: number;
+  boleto: number;
+}
+
+export function ExpenseBreakdown({ dinheiro, cartao, pix, boleto }: ExpenseBreakdownProps) {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount);
+  };
+
+  const total = dinheiro + cartao + pix + boleto;
+  const getPercentage = (value: number) => total > 0 ? ((value / total) * 100).toFixed(1) : '0';
+
+  const items = [
+    { label: 'Dinheiro', value: dinheiro, icon: Banknote, colorClass: 'bg-cash', textClass: 'text-cash' },
+    { label: 'Cartão', value: cartao, icon: CreditCard, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
+    { label: 'PIX', value: pix, icon: Smartphone, colorClass: 'bg-pix', textClass: 'text-pix' },
+    { label: 'Boleto', value: boleto, icon: FileText, colorClass: 'bg-boleto', textClass: 'text-boleto' },
+  ];
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-5 shadow-soft animate-fade-in" style={{ animationDelay: '250ms' }}>
+      <h3 className="text-lg font-semibold font-display mb-4">Despesas por Método</h3>
+      
+      {/* Progress bar */}
+      <div className="h-3 rounded-full bg-muted overflow-hidden flex mb-6">
+        {items.map((item, index) => (
+          <div
+            key={item.label}
+            className={cn('h-full transition-all duration-500', item.colorClass)}
+            style={{ 
+              width: `${getPercentage(item.value)}%`,
+              animationDelay: `${350 + index * 100}ms`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Breakdown list */}
+      <div className="space-y-3">
+        {items.map((item, index) => (
+          <div
+            key={item.label}
+            className="flex items-center justify-between p-3 rounded-lg bg-muted/50 animate-slide-in"
+            style={{ animationDelay: `${450 + index * 100}ms` }}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn('p-2 rounded-lg', item.colorClass, 'bg-opacity-20')}>
+                <item.icon className={cn('h-4 w-4', item.textClass)} />
+              </div>
+              <span className="font-medium">{item.label}</span>
+            </div>
+            <div className="text-right">
+              <p className="font-semibold">{formatCurrency(item.value)}</p>
+              <p className="text-xs text-muted-foreground">{getPercentage(item.value)}%</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
