@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import logoSrc from '@/assets/yummi-logo.png';
 const logo = { url: logoSrc };
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { Loader2, Mail, Lock } from 'lucide-react';
 
 function traduzirErro(msg?: string) {
   if (!msg) return 'Ocorreu um erro. Tente novamente.';
@@ -23,10 +23,8 @@ function traduzirErro(msg?: string) {
 }
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -52,38 +50,17 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        toast({
-          title: 'Bem-vindo!',
-          description: 'Login realizado com sucesso.',
-        });
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              full_name: fullName,
-            },
-          },
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: 'Conta criada!',
-          description: 'Confirme o seu email clicando no link que enviámos e depois entre.',
-        });
-        setIsLogin(true);
-      }
+      toast({
+        title: 'Bem-vindo!',
+        description: 'Login realizado com sucesso.',
+      });
     } catch (error: any) {
       console.error('Auth error:', error);
       toast({
@@ -101,35 +78,11 @@ export default function Auth() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1 text-center">
           <img src={logo.url} alt="Yummi Sushi" className="mx-auto h-20 w-auto object-contain mb-2" />
-          <CardTitle className="text-2xl font-bold">
-            {isLogin ? 'Entrar' : 'Criar Conta'}
-          </CardTitle>
-          <CardDescription>
-            {isLogin 
-              ? 'Entre com suas credenciais para acessar'
-              : 'Preencha os dados para criar sua conta'}
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">Entrar</CardTitle>
+          <CardDescription>Entre com suas credenciais para acessar</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Nome Completo</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="Seu nome"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="pl-10"
-                    required={!isLogin}
-                  />
-                </div>
-              </div>
-            )}
-            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -162,42 +115,27 @@ export default function Auth() {
               </div>
             </div>
 
-            {isLogin && (
-              <button
-                type="button"
-                className="text-sm text-primary hover:underline"
-                onClick={async () => {
-                  if (!email) {
-                    toast({ title: 'Indique o email', description: 'Escreva o seu email acima primeiro.', variant: 'destructive' });
-                    return;
-                  }
-                  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
-                  toast(error
-                    ? { title: 'Erro', description: traduzirErro(error.message), variant: 'destructive' }
-                    : { title: 'Email enviado', description: 'Veja a sua caixa de correio para criar uma nova senha.' });
-                }}
-              >
-                Esqueci a senha
-              </button>
-            )}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? 'Entrar' : 'Criar Conta'}
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">
-              {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-            </span>{' '}
             <button
               type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline font-medium"
+              className="text-sm text-primary hover:underline"
+              onClick={async () => {
+                if (!email) {
+                  toast({ title: 'Indique o email', description: 'Escreva o seu email acima primeiro.', variant: 'destructive' });
+                  return;
+                }
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+                toast(error
+                  ? { title: 'Erro', description: traduzirErro(error.message), variant: 'destructive' }
+                  : { title: 'Email enviado', description: 'Veja a sua caixa de correio para criar uma nova senha.' });
+              }}
             >
-              {isLogin ? 'Criar conta' : 'Fazer login'}
+              Esqueci a senha
             </button>
-          </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Entrar
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>
