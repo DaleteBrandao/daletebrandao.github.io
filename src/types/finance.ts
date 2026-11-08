@@ -5,6 +5,7 @@ export type ExpenseCategory = 'vendas_restaurante' | 'vendas_ixpressum' | 'outro
 export interface Transaction {
   id: string;
   user_id?: string;
+  authorName?: string;
   date: string;
   description: string;
   type: 'receita' | 'despesa';

@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Pencil, Download, Search } from 'lucide-react';
+import { DeletionDialog } from '@/components/DeletionDialog';
 
 interface TransactionTableProps {
   transactions: Transaction[];
-  onRemove: (id: string) => void;
+  onRemove: (id: string, password: string) => Promise<void>;
   showAmounts?: boolean;
   onUpdate: (id: string, changes: Partial<Omit<Transaction, 'id'>>) => void;
 }
@@ -64,6 +65,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
   const [typeFilter, setTypeFilter] = useState('todos');
   const [methodFilter, setMethodFilter] = useState('todos');
   const [editing, setEditing] = useState<Transaction | null>(null);
+  const [removing, setRemoving] = useState<Transaction | null>(null);
 
   const visible = transactions.filter(t =>
     (typeFilter === 'todos' || t.type === typeFilter) &&
@@ -72,8 +74,8 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
   );
 
   const exportCsv = () => {
-    const rows = [['Data', 'Descrição', 'Tipo', 'Método', 'Valor (€)'],
-      ...visible.map(t => [t.date, t.description, t.type === 'receita' ? 'Receita' : 'Despesa', getPaymentLabel(t.paymentMethod) ?? '', t.amount.toFixed(2).replace('.', ',')])];
+    const rows = [['Data', 'Descrição', 'Tipo', 'Método', 'Autor', 'ID do autor', 'Valor (€)'],
+      ...visible.map(t => [t.date, t.description, t.type === 'receita' ? 'Receita' : 'Despesa', getPaymentLabel(t.paymentMethod) ?? '', t.authorName ?? '', t.user_id ?? '', t.amount.toFixed(2).replace('.', ',')])];
     const csv = '\uFEFF' + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -126,6 +128,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
               <TableHead className="font-semibold">Descrição</TableHead>
               <TableHead className="font-semibold">Tipo</TableHead>
               <TableHead className="font-semibold">Método</TableHead>
+              <TableHead className="font-semibold">Lançado por</TableHead>
               {showAmounts && <TableHead className="font-semibold text-right">Valor</TableHead>}
               <TableHead className="w-12"></TableHead>
             </TableRow>
@@ -133,7 +136,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
           <TableBody>
             {sortedTransactions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={showAmounts ? 7 : 6} className="text-center text-muted-foreground py-8">
                   Nenhuma transação neste mês
                 </TableCell>
               </TableRow>
@@ -171,6 +174,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
                       <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
+                  <TableCell><p className="text-sm font-medium">{transaction.authorName || 'Colaborador'}</p><p className="text-xs text-muted-foreground break-all" title={transaction.user_id}>{transaction.user_id || '—'}</p></TableCell>
                   {showAmounts && <TableCell className={cn(
                     'text-right font-semibold',
                     transaction.type === 'receita' ? 'text-success' : 'text-destructive'
@@ -184,7 +188,9 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => onRemove(transaction.id)}
+                      onClick={() => setRemoving(transaction)}
+                      aria-label="Excluir transação"
+                      title="Excluir transação"
                       className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -197,6 +203,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
         </Table>
       </div>
 
+      {removing && <DeletionDialog title="Excluir transação" description={`Excluir o lançamento ${removing.description}?`} onClose={() => setRemoving(null)} onConfirm={(password) => onRemove(removing.id, password)} />}
       <Dialog open={!!editing} onOpenChange={o => !o && setEditing(null)}>
         <DialogContent>
           <DialogHeader><DialogTitle>Editar transação</DialogTitle></DialogHeader>

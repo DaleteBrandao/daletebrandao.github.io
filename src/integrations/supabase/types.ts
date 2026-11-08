@@ -14,12 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      deletion_attempts: {
+        Row: {
+          attempts: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          attempts?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          attempts?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           email: string | null
           full_name: string | null
           id: string
+          is_active: boolean
+          job_title: string | null
           updated_at: string
         }
         Insert: {
@@ -27,6 +47,8 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          is_active?: boolean
+          job_title?: string | null
           updated_at?: string
         }
         Update: {
@@ -34,6 +56,8 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          is_active?: boolean
+          job_title?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -41,6 +65,7 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          author_name: string | null
           created_at: string
           date: string
           description: string
@@ -52,6 +77,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          author_name?: string | null
           created_at?: string
           date: string
           description: string
@@ -63,6 +89,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          author_name?: string | null
           created_at?: string
           date?: string
           description?: string
@@ -97,6 +124,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_deletion_attempt: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -104,6 +132,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_member: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "collaborator"

@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Transaction, PaymentMethod } from '@/types/finance';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { manageCollaborators } from '@/lib/collaborators';
 
 export function useFinanceData() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -25,6 +26,7 @@ export function useFinanceData() {
       const formattedTransactions: Transaction[] = (data || []).map(t => ({
         id: t.id,
         user_id: t.user_id,
+        authorName: t.author_name ?? undefined,
         date: t.date,
         description: t.description,
         type: t.type as 'receita' | 'despesa',
@@ -85,6 +87,7 @@ export function useFinanceData() {
       const newTransaction: Transaction = {
         id: data.id,
         user_id: data.user_id,
+        authorName: data.author_name ?? undefined,
         date: data.date,
         description: data.description,
         type: data.type as 'receita' | 'despesa',
@@ -108,14 +111,9 @@ export function useFinanceData() {
     }
   }, [toast]);
 
-  const removeTransaction = useCallback(async (id: string) => {
+  const removeTransaction = useCallback(async (id: string, password: string) => {
     try {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await manageCollaborators({ action: 'delete-transaction', id, password });
 
       setTransactions(prev => prev.filter(t => t.id !== id));
       
@@ -124,12 +122,7 @@ export function useFinanceData() {
         description: 'Transação removida com sucesso!',
       });
     } catch (error: any) {
-      console.error('Erro ao remover transação:', error);
-      toast({
-        title: 'Erro ao remover',
-        description: error.message || 'Não foi possível remover a transação.',
-        variant: 'destructive',
-      });
+      throw error;
     }
   }, [toast]);
 
