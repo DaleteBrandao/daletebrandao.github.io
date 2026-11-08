@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import logoSrc from '@/assets/yummi-logo.png';
 const logo = { url: logoSrc };
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { Loader2, Mail, Lock } from 'lucide-react';
 
 function traduzirErro(msg?: string) {
   if (!msg) return 'Ocorreu um erro. Tente novamente.';
