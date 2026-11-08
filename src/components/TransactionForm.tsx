@@ -154,7 +154,7 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
         <div className="space-y-2">
           <Label htmlFor="type">Tipo</Label>
           <Select value={type} onValueChange={(v: 'receita' | 'despesa') => setType(v)}>
-            <SelectTrigger id="payment" className="bg-background">
+            <SelectTrigger id="type" className="bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -167,7 +167,7 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
         <div className="space-y-2">
           <Label htmlFor="payment">Método</Label>
           <Select value={paymentMethod} onValueChange={(v: PaymentMethod) => setPaymentMethod(v)}>
-            <SelectTrigger className="bg-background">
+            <SelectTrigger id="payment" className="bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
