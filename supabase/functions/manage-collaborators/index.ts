@@ -34,9 +34,10 @@ Deno.serve(async (req) => {
     if (body.action !== 'delete-transaction' && !canManageCollaborators(Boolean(isAdmin), Boolean(active))) return respond({ error: 'Apenas a administradora pode gerir colaboradores.' }, 403);
 
     if (body.action === 'list') {
-      const { data: roles, error } = await client.from('user_roles').select('user_id').eq('role', 'collaborator');
+      const { data: roles, error } = await client.from('user_roles').select('user_id, role');
       if (error) throw error;
-      const ids = (roles || []).map((r) => r.user_id);
+      const admins = new Set((roles || []).filter((r) => r.role === 'admin').map((r) => r.user_id));
+      const ids = (roles || []).filter((r) => r.role === 'collaborator' && !admins.has(r.user_id)).map((r) => r.user_id);
       if (!ids.length) return respond({ collaborators: [] });
       const { data: collaborators, error: profileError } = await client.from('profiles').select('id, full_name, email, job_title, is_active').in('id', ids).order('created_at');
       if (profileError) throw profileError;
