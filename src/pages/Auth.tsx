@@ -80,7 +80,7 @@ export default function Auth() {
 
         toast({
           title: 'Conta criada!',
-          description: 'Você já pode fazer login.',
+          description: 'Confirme o seu email clicando no link que enviámos e depois entre.',
         });
         setIsLogin(true);
       }
