@@ -1,4 +1,6 @@
 # Work
+- [ ] Apply the Yummi Sushi identity to Yummi Finanças.
+- [ ] Remove PIX and Boleto payment options and verify transaction controls.
 - [x] Add administrator collaborator invitations, job titles and access removal.
 - [x] Display transaction author ID and name.
 - [x] Require server-validated password for deletions.
