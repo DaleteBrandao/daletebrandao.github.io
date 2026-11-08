@@ -140,7 +140,7 @@ export default function Auth() {
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Lock className="absolute left-3 top-3 z-10 h-4 w-4 text-muted-foreground" />
                 <PasswordInput
                   id="password"
                   placeholder="••••••••"
