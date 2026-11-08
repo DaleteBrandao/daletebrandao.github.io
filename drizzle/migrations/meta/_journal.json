@@ -8,6 +8,13 @@
       "when": 1794172848740,
       "tag": "0000_admin_roles_shared",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794180430380,
+      "tag": "0001_collaborators_author_and_protected_deletion",
+      "breakpoints": true
     }
   ]
 }
