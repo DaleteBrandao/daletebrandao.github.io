@@ -12,7 +12,8 @@ import { FinanceChart } from '@/components/FinanceChart';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Loader2 } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
-import logo from '@/assets/yummi-logo.png.asset.json';
+import logoSrc from '@/assets/yummi-logo.png';
+const logo = { url: logoSrc };
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);

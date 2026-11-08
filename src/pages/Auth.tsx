@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import logo from '@/assets/yummi-logo.png.asset.json';
+import logoSrc from '@/assets/yummi-logo.png';
+const logo = { url: logoSrc };
 import { Loader2, Mail, Lock, User } from 'lucide-react';
 
 export default function Auth() {
