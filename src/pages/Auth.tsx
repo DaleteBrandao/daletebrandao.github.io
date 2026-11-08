@@ -115,42 +115,27 @@ export default function Auth() {
               </div>
             </div>
 
-            {isLogin && (
-              <button
-                type="button"
-                className="text-sm text-primary hover:underline"
-                onClick={async () => {
-                  if (!email) {
-                    toast({ title: 'Indique o email', description: 'Escreva o seu email acima primeiro.', variant: 'destructive' });
-                    return;
-                  }
-                  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
-                  toast(error
-                    ? { title: 'Erro', description: traduzirErro(error.message), variant: 'destructive' }
-                    : { title: 'Email enviado', description: 'Veja a sua caixa de correio para criar uma nova senha.' });
-                }}
-              >
-                Esqueci a senha
-              </button>
-            )}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? 'Entrar' : 'Criar Conta'}
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">
-              {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-            </span>{' '}
             <button
               type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline font-medium"
+              className="text-sm text-primary hover:underline"
+              onClick={async () => {
+                if (!email) {
+                  toast({ title: 'Indique o email', description: 'Escreva o seu email acima primeiro.', variant: 'destructive' });
+                  return;
+                }
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+                toast(error
+                  ? { title: 'Erro', description: traduzirErro(error.message), variant: 'destructive' }
+                  : { title: 'Email enviado', description: 'Veja a sua caixa de correio para criar uma nova senha.' });
+              }}
             >
-              {isLogin ? 'Criar conta' : 'Fazer login'}
+              Esqueci a senha
             </button>
-          </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Entrar
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>
