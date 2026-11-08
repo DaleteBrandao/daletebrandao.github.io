@@ -12,11 +12,18 @@ import { FinanceChart } from '@/components/FinanceChart';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Loader2 } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
+import logoSrc from '@/assets/yummi-logo.png';
+const logo = { url: logoSrc };
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' }).then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
 
   const {
     transactions,
@@ -70,9 +77,7 @@ const Index = () => {
         <div className="container py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center shadow-elegant">
-                <span className="text-2xl">🍣</span>
-              </div>
+              <img src={logo.url} alt="Yummi Sushi" className="h-12 w-auto object-contain" />
               <div>
                 <h1 className="text-2xl font-bold font-display tracking-tight">Yummi Sushi</h1>
                 <p className="text-sm text-muted-foreground">Controle Financeiro</p>
@@ -129,6 +134,7 @@ const Index = () => {
               />
             </section>
 
+            {isAdmin && (<>
             {/* Finance Chart */}
             <section>
               <FinanceChart transactions={allTransactions} />
@@ -145,6 +151,7 @@ const Index = () => {
               <ExpenseBreakdown despesas={despesasPorDescricao} />
             </section>
 
+            </>)}
             {/* Transaction Form */}
             <section>
               <TransactionForm onAdd={addTransaction} selectedMonth={selectedMonth} />
@@ -162,7 +169,7 @@ const Index = () => {
       <footer className="border-t border-border bg-card mt-auto">
         <div className="container py-4">
           <p className="text-sm text-muted-foreground text-center">
-            © 2024 Yummi Sushi • Gestão Financeira
+            © {new Date().getFullYear()} Yummi Sushi • Gestão Financeira
           </p>
         </div>
       </footer>
