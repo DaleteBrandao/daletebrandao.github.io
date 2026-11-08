@@ -84,7 +84,7 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Controle Financeiro</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4">
               <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
