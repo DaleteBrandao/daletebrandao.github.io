@@ -103,6 +103,7 @@ const Index = () => {
           </div>
         ) : (
           <>
+            {isAdmin && (<>
             {/* Summary Cards */}
             <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryCard
@@ -135,7 +136,6 @@ const Index = () => {
               />
             </section>
 
-            {isAdmin && (<>
             {/* Finance Chart */}
             <section>
               <FinanceChart transactions={allTransactions} />
@@ -160,7 +160,7 @@ const Index = () => {
 
             {/* Transactions Table */}
             <section>
-              <TransactionTable transactions={transactions} onRemove={removeTransaction} onUpdate={updateTransaction} />
+              <TransactionTable transactions={transactions} onRemove={removeTransaction} onUpdate={updateTransaction} showAmounts={isAdmin} />
             </section>
           </>
         )}
