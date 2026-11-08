@@ -55,8 +55,8 @@ export function ExpenseBreakdown({ despesas }: ExpenseBreakdownProps) {
     }));
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-soft animate-fade-in" style={{ animationDelay: '250ms' }}>
-      <h3 className="text-lg font-semibold font-display mb-4">Despesas por Categoria</h3>
+    <div className="border-t border-border py-5 animate-fade-in" style={{ animationDelay: '250ms' }}>
+      <h3 className="text-2xl font-display uppercase mb-4">Despesas por Categoria</h3>
       
       {items.length === 0 ? (
         <p className="text-muted-foreground text-sm text-center py-4">Nenhuma despesa registrada</p>
@@ -86,7 +86,7 @@ export function ExpenseBreakdown({ despesas }: ExpenseBreakdownProps) {
               >
                 <div className="flex items-center gap-3">
                   <div className={cn('p-2 rounded-lg', item.colorClass, 'bg-opacity-20')}>
-                    <item.icon className={cn('h-4 w-4', item.textClass)} />
+                    <item.icon className="h-4 w-4 text-background" />
                   </div>
                   <span className="font-medium">{item.label}</span>
                 </div>

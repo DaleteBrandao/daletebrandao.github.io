@@ -66,7 +66,7 @@ export function FinanceChart({ transactions }: FinanceChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <Card className="bg-card border-border shadow-soft">
+      <Card className="rounded-none bg-transparent border-0 border-t border-border shadow-none">
         <CardHeader className="flex flex-row items-center gap-3">
           <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center">
             <TrendingUp className="h-5 w-5 text-primary-foreground" />
@@ -83,7 +83,7 @@ export function FinanceChart({ transactions }: FinanceChartProps) {
   }
 
   return (
-    <Card className="bg-card border-border shadow-soft">
+    <Card className="rounded-none bg-transparent border-0 border-t border-border shadow-none">
       <CardHeader className="flex flex-row items-center gap-3">
         <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center">
           <TrendingUp className="h-5 w-5 text-primary-foreground" />
