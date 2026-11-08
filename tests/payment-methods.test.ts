@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { PAYMENT_OPTIONS, isActivePaymentMethod } from './payment-methods';
+import { PAYMENT_OPTIONS, isActivePaymentMethod } from '../src/lib/payment-methods';
 
 describe('payment options', () => {
   test('only Dinheiro and Cartão can be selected', () => {
