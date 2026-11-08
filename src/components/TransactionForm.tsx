@@ -11,15 +11,9 @@ import { Transaction, PaymentMethod } from '@/types/finance';
 import { Plus, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PAYMENT_OPTIONS, isActivePaymentMethod } from '@/lib/payment-methods';
+import { INCOME_CATEGORIES, IncomeCategory, incomeDescription } from '@/lib/income-categories';
 
-type IncomeCategory = 'vendas_restaurante' | 'vendas_ixpressum' | 'outros';
 type ExpenseCategory = 'mercado' | 'peixe' | 'refrielvas' | 'energia' | 'agua' | 'internet' | 'seguranca_social' | 'salario' | 'freelancer' | 'chines' | 'decoracao' | 'outros';
-
-const INCOME_CATEGORIES: { value: IncomeCategory; label: string }[] = [
-  { value: 'vendas_restaurante', label: 'Vendas Restaurante' },
-  { value: 'vendas_ixpressum', label: 'Vendas IXpressum' },
-  { value: 'outros', label: 'Outros' },
-];
 
 const EXPENSE_CATEGORIES: { value: ExpenseCategory; label: string }[] = [
   { value: 'mercado', label: 'Mercado' },
@@ -55,9 +49,7 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
     
     let finalDescription = '';
     if (type === 'receita') {
-      finalDescription = incomeCategory === 'outros' 
-        ? customDescription 
-        : INCOME_CATEGORIES.find(c => c.value === incomeCategory)?.label || '';
+      finalDescription = incomeDescription(incomeCategory, customDescription);
     } else {
       finalDescription = expenseCategory === 'outros' 
         ? customDescription 
