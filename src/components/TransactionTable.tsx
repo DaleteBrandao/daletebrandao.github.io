@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Pencil, Download, Search } from 'lucide-react';
 import { DeletionDialog } from '@/components/DeletionDialog';
+import { PAYMENT_OPTIONS, isActivePaymentMethod } from '@/lib/payment-methods';
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -88,10 +89,10 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
   );
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-soft overflow-hidden animate-fade-in" style={{ animationDelay: '300ms' }}>
-      <div className="p-5 border-b border-border">
+    <div className="border-t border-border overflow-hidden animate-fade-in" style={{ animationDelay: '300ms' }}>
+      <div className="py-5 border-b border-border">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold font-display">Transações do Mês</h3>
+          <h3 className="text-2xl font-display uppercase">Transações do Mês</h3>
           {showAmounts && <Button variant="outline" size="sm" onClick={exportCsv}><Download className="h-4 w-4 mr-2" />Exportar Excel</Button>}
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -111,10 +112,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os métodos</SelectItem>
-              <SelectItem value="dinheiro">Dinheiro</SelectItem>
-              <SelectItem value="cartao">Cartão</SelectItem>
-              <SelectItem value="pix">PIX</SelectItem>
-              <SelectItem value="boleto">Boleto</SelectItem>
+              {PAYMENT_OPTIONS.map(option => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -216,21 +214,18 @@ export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts
               <div className="space-y-1"><Label>Data</Label>
                 <Input type="date" value={editing.date} onChange={e => setEditing({ ...editing, date: e.target.value })} /></div>
               <div className="space-y-1"><Label>Método</Label>
-                <Select value={editing.paymentMethod} onValueChange={v => setEditing({ ...editing, paymentMethod: v as Transaction['paymentMethod'] })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select value={isActivePaymentMethod(editing.paymentMethod) ? editing.paymentMethod : ''} onValueChange={v => { if (isActivePaymentMethod(v)) setEditing({ ...editing, paymentMethod: v }); }}>
+                  <SelectTrigger aria-label="Método de pagamento"><SelectValue placeholder="Selecione o método" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                    <SelectItem value="cartao">Cartão</SelectItem>
-                    <SelectItem value="pix">PIX</SelectItem>
-                    <SelectItem value="boleto">Boleto</SelectItem>
+                    {PAYMENT_OPTIONS.map(option => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}
                   </SelectContent>
                 </Select></div>
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(null)}>Cancelar</Button>
-            <Button disabled={!editing || !editing.description || !(editing.amount > 0) || !editing.paymentMethod} onClick={() => {
-              if (!editing) return;
+            <Button disabled={!editing || !editing.description || !(editing.amount > 0) || !isActivePaymentMethod(editing.paymentMethod)} onClick={() => {
+              if (!editing || !isActivePaymentMethod(editing.paymentMethod)) return;
               onUpdate(editing.id, { description: editing.description, amount: editing.amount, date: editing.date, paymentMethod: editing.paymentMethod });
               setEditing(null);
             }}>Guardar</Button>
