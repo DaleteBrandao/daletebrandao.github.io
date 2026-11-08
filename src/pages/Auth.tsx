@@ -11,6 +11,17 @@ import logoSrc from '@/assets/yummi-logo.png';
 const logo = { url: logoSrc };
 import { Loader2, Mail, Lock, User } from 'lucide-react';
 
+function traduzirErro(msg?: string) {
+  if (!msg) return 'Ocorreu um erro. Tente novamente.';
+  if (msg.includes('Invalid login credentials')) return 'Email ou senha incorretos.';
+  if (msg.includes('Email not confirmed')) return 'Confirme o seu email antes de entrar (veja a caixa de correio).';
+  if (msg.includes('rate limit')) return 'Demasiados pedidos de email. Aguarde cerca de 1 hora e tente novamente.';
+  if (msg.includes('already registered')) return 'Este email já tem conta. Use "Entrar".';
+  if (msg.includes('Password should be')) return 'A senha deve ter pelo menos 6 caracteres.';
+  if (msg.includes('pwned') || msg.includes('weak')) return 'Esta senha é muito comum. Escolha outra mais segura.';
+  return msg;
+}
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
@@ -69,7 +80,7 @@ export default function Auth() {
 
         toast({
           title: 'Conta criada!',
-          description: 'Você já pode fazer login.',
+          description: 'Confirme o seu email clicando no link que enviámos e depois entre.',
         });
         setIsLogin(true);
       }
@@ -77,9 +88,7 @@ export default function Auth() {
       console.error('Auth error:', error);
       toast({
         title: 'Erro',
-        description: error.message === 'Invalid login credentials' 
-          ? 'Credenciais inválidas. Verifique seu email e senha.'
-          : error.message || 'Ocorreu um erro. Tente novamente.',
+        description: traduzirErro(error?.message),
         variant: 'destructive',
       });
     } finally {
@@ -164,7 +173,7 @@ export default function Auth() {
                   }
                   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
                   toast(error
-                    ? { title: 'Erro', description: error.message, variant: 'destructive' }
+                    ? { title: 'Erro', description: traduzirErro(error.message), variant: 'destructive' }
                     : { title: 'Email enviado', description: 'Veja a sua caixa de correio para criar uma nova senha.' });
                 }}
               >

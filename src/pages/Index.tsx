@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { SummaryCard } from '@/components/SummaryCard';
@@ -21,7 +21,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
-    if (!user) return;
+    if (!user) { setIsAdmin(false); return; }
     supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' }).then(({ data }) => setIsAdmin(!!data));
   }, [user]);
 
@@ -67,8 +67,7 @@ const Index = () => {
   }
 
   if (!user) {
-    navigate('/auth');
-    return null;
+    return <Navigate to="/auth" replace />;
   }
 
   return (

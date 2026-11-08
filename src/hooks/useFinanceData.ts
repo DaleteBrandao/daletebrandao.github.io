@@ -47,6 +47,11 @@ export function useFinanceData() {
 
   useEffect(() => {
     fetchTransactions();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'USER_UPDATED') fetchTransactions();
+      if (event === 'SIGNED_OUT') setTransactions([]);
+    });
+    return () => subscription.unsubscribe();
   }, [fetchTransactions]);
 
   const addTransaction = useCallback(async (transaction: Omit<Transaction, 'id'>) => {
