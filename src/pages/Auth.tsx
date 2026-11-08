@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import logo from '@/assets/yummi-logo.png.asset.json';
 import { Loader2, Mail, Lock, User } from 'lucide-react';
 
 export default function Auth() {
@@ -88,6 +89,7 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1 text-center">
+          <img src={logo.url} alt="Yummi Sushi" className="mx-auto h-20 w-auto object-contain mb-2" />
           <CardTitle className="text-2xl font-bold">
             {isLogin ? 'Entrar' : 'Criar Conta'}
           </CardTitle>
