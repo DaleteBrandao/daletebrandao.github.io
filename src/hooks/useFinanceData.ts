@@ -128,6 +128,21 @@ export function useFinanceData() {
     }
   }, [toast]);
 
+  const updateTransaction = useCallback(async (id: string, changes: Partial<Omit<Transaction, 'id'>>) => {
+    const { error } = await supabase.from('transactions').update({
+      ...(changes.description !== undefined && { description: changes.description }),
+      ...(changes.amount !== undefined && { amount: changes.amount }),
+      ...(changes.date !== undefined && { date: changes.date }),
+      ...(changes.paymentMethod !== undefined && { payment_method: changes.paymentMethod }),
+    }).eq('id', id);
+    if (error) {
+      toast({ title: 'Erro ao editar', description: error.message, variant: 'destructive' });
+      return;
+    }
+    setTransactions(prev => prev.map(t => t.id === id ? { ...t, ...changes } : t));
+    toast({ title: 'Sucesso', description: 'Transação atualizada!' });
+  }, [toast]);
+
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => t.date.startsWith(selectedMonth));
   }, [transactions, selectedMonth]);
@@ -182,6 +197,7 @@ export function useFinanceData() {
     allTransactions: transactions,
     addTransaction,
     removeTransaction,
+    updateTransaction,
     selectedMonth,
     setSelectedMonth,
     receitasPorMetodo,

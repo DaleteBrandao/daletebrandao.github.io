@@ -3,13 +3,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Trash2, TrendingUp, TrendingDown, Banknote, CreditCard, Smartphone, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Pencil, Download, Search } from 'lucide-react';
 
 interface TransactionTableProps {
   transactions: Transaction[];
   onRemove: (id: string) => void;
+  onUpdate: (id: string, changes: Partial<Omit<Transaction, 'id'>>) => void;
 }
 
-export function TransactionTable({ transactions, onRemove }: TransactionTableProps) {
+export function TransactionTable({ transactions, onRemove, onUpdate }: TransactionTableProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
       style: 'currency',
@@ -52,14 +59,62 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
     }
   };
 
-  const sortedTransactions = [...transactions].sort((a, b) => 
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('todos');
+  const [methodFilter, setMethodFilter] = useState('todos');
+  const [editing, setEditing] = useState<Transaction | null>(null);
+
+  const visible = transactions.filter(t =>
+    (typeFilter === 'todos' || t.type === typeFilter) &&
+    (methodFilter === 'todos' || t.paymentMethod === methodFilter) &&
+    t.description.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const exportCsv = () => {
+    const rows = [['Data', 'Descrição', 'Tipo', 'Método', 'Valor (€)'],
+      ...visible.map(t => [t.date, t.description, t.type === 'receita' ? 'Receita' : 'Despesa', getPaymentLabel(t.paymentMethod) ?? '', t.amount.toFixed(2).replace('.', ',')])];
+    const csv = '\uFEFF' + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'transacoes-yummi.csv';
+    a.click();
+  };
+
+  const sortedTransactions = [...visible].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-soft overflow-hidden animate-fade-in" style={{ animationDelay: '300ms' }}>
       <div className="p-5 border-b border-border">
-        <h3 className="text-lg font-semibold font-display">Transações do Mês</h3>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-lg font-semibold font-display">Transações do Mês</h3>
+          <Button variant="outline" size="sm" onClick={exportCsv}><Download className="h-4 w-4 mr-2" />Exportar Excel</Button>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Procurar descrição" value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
+          </div>
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os tipos</SelectItem>
+              <SelectItem value="receita">Receitas</SelectItem>
+              <SelectItem value="despesa">Despesas</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={methodFilter} onValueChange={setMethodFilter}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os métodos</SelectItem>
+              <SelectItem value="dinheiro">Dinheiro</SelectItem>
+              <SelectItem value="cartao">Cartão</SelectItem>
+              <SelectItem value="pix">PIX</SelectItem>
+              <SelectItem value="boleto">Boleto</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <div className="overflow-x-auto">
@@ -121,7 +176,10 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
                   )}>
                     {transaction.type === 'receita' ? '+' : '-'} {formatCurrency(transaction.amount)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => setEditing(transaction)} className="h-8 w-8 text-muted-foreground" aria-label="Editar">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -137,6 +195,40 @@ export function TransactionTable({ transactions, onRemove }: TransactionTablePro
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={!!editing} onOpenChange={o => !o && setEditing(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Editar transação</DialogTitle></DialogHeader>
+          {editing && (
+            <div className="space-y-3">
+              <div className="space-y-1"><Label>Descrição</Label>
+                <Input value={editing.description} onChange={e => setEditing({ ...editing, description: e.target.value })} /></div>
+              <div className="space-y-1"><Label>Valor (€)</Label>
+                <Input type="number" step="0.01" min="0" value={editing.amount} onChange={e => setEditing({ ...editing, amount: Number(e.target.value) })} /></div>
+              <div className="space-y-1"><Label>Data</Label>
+                <Input type="date" value={editing.date} onChange={e => setEditing({ ...editing, date: e.target.value })} /></div>
+              <div className="space-y-1"><Label>Método</Label>
+                <Select value={editing.paymentMethod} onValueChange={v => setEditing({ ...editing, paymentMethod: v as Transaction['paymentMethod'] })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="dinheiro">Dinheiro</SelectItem>
+                    <SelectItem value="cartao">Cartão</SelectItem>
+                    <SelectItem value="pix">PIX</SelectItem>
+                    <SelectItem value="boleto">Boleto</SelectItem>
+                  </SelectContent>
+                </Select></div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>Cancelar</Button>
+            <Button disabled={!editing || !editing.description || !(editing.amount > 0) || !editing.paymentMethod} onClick={() => {
+              if (!editing) return;
+              onUpdate(editing.id, { description: editing.description, amount: editing.amount, date: editing.date, paymentMethod: editing.paymentMethod });
+              setEditing(null);
+            }}>Guardar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

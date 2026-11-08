@@ -30,6 +30,7 @@ const Index = () => {
     allTransactions,
     addTransaction,
     removeTransaction,
+    updateTransaction,
     selectedMonth,
     setSelectedMonth,
     receitasPorMetodo,
@@ -159,7 +160,7 @@ const Index = () => {
 
             {/* Transactions Table */}
             <section>
-              <TransactionTable transactions={transactions} onRemove={removeTransaction} />
+              <TransactionTable transactions={transactions} onRemove={removeTransaction} onUpdate={updateTransaction} />
             </section>
           </>
         )}
