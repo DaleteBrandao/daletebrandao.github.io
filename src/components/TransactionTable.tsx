@@ -13,10 +13,11 @@ import { Pencil, Download, Search } from 'lucide-react';
 interface TransactionTableProps {
   transactions: Transaction[];
   onRemove: (id: string) => void;
+  showAmounts?: boolean;
   onUpdate: (id: string, changes: Partial<Omit<Transaction, 'id'>>) => void;
 }
 
-export function TransactionTable({ transactions, onRemove, onUpdate }: TransactionTableProps) {
+export function TransactionTable({ transactions, onRemove, onUpdate, showAmounts = true }: TransactionTableProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
       style: 'currency',
@@ -89,7 +90,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate }: Transacti
       <div className="p-5 border-b border-border">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-lg font-semibold font-display">Transações do Mês</h3>
-          <Button variant="outline" size="sm" onClick={exportCsv}><Download className="h-4 w-4 mr-2" />Exportar Excel</Button>
+          {showAmounts && <Button variant="outline" size="sm" onClick={exportCsv}><Download className="h-4 w-4 mr-2" />Exportar Excel</Button>}
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <div className="relative">
@@ -125,7 +126,7 @@ export function TransactionTable({ transactions, onRemove, onUpdate }: Transacti
               <TableHead className="font-semibold">Descrição</TableHead>
               <TableHead className="font-semibold">Tipo</TableHead>
               <TableHead className="font-semibold">Método</TableHead>
-              <TableHead className="font-semibold text-right">Valor</TableHead>
+              {showAmounts && <TableHead className="font-semibold text-right">Valor</TableHead>}
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -170,14 +171,14 @@ export function TransactionTable({ transactions, onRemove, onUpdate }: Transacti
                       <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
-                  <TableCell className={cn(
+                  {showAmounts && <TableCell className={cn(
                     'text-right font-semibold',
                     transaction.type === 'receita' ? 'text-success' : 'text-destructive'
                   )}>
                     {transaction.type === 'receita' ? '+' : '-'} {formatCurrency(transaction.amount)}
-                  </TableCell>
+                  </TableCell>}
                   <TableCell className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => setEditing(transaction)} className="h-8 w-8 text-muted-foreground" aria-label="Editar">
+                    <Button variant="ghost" size="icon" onClick={() => setEditing(transaction)} hidden={!showAmounts} className="h-8 w-8 text-muted-foreground" aria-label="Editar">
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
