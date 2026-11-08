@@ -13,8 +13,7 @@ import { FinanceChart } from '@/components/FinanceChart';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Loader2 } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
-import logoSrc from '@/assets/yummi-logo.png';
-const logo = { url: logoSrc };
+import { YummiBrand } from '@/components/YummiBrand';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -74,16 +73,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card shadow-soft">
-        <div className="container py-6">
+      <header className="border-b border-border bg-card">
+        <div className="container py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <img src={logo.url} alt="Yummi Sushi" className="h-12 w-auto object-contain" />
-              <div>
-                <h1 className="text-2xl font-bold font-display tracking-tight">Yummi Sushi</h1>
-                <p className="text-sm text-muted-foreground">Controle Financeiro</p>
-              </div>
-            </div>
+            <YummiBrand />
             <div className="flex flex-wrap items-center gap-4">
               <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
               <Button variant="outline" size="sm" onClick={handleLogout}>
@@ -97,6 +90,7 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container py-8 space-y-8">
+        <h1 className="text-4xl font-display uppercase">{isAdmin ? 'Painel financeiro' : 'Transações'}</h1>
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -171,7 +165,7 @@ const Index = () => {
       <footer className="border-t border-border bg-card mt-auto">
         <div className="container py-4">
           <p className="text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} Yummi Sushi • Gestão Financeira
+            © {new Date().getFullYear()} Yummi Finanças · Yummi Sushi Bar
           </p>
         </div>
       </footer>

@@ -19,18 +19,18 @@ interface ExpenseBreakdownProps {
 }
 
 const categoryConfig: Record<string, { icon: React.ElementType; colorClass: string; textClass: string }> = {
-  'Mercado': { icon: ShoppingCart, colorClass: 'bg-emerald-500', textClass: 'text-emerald-500' },
-  'Peixe': { icon: Fish, colorClass: 'bg-blue-500', textClass: 'text-blue-500' },
-  'Refrielvas': { icon: Leaf, colorClass: 'bg-green-500', textClass: 'text-green-500' },
-  'Energia': { icon: Zap, colorClass: 'bg-yellow-500', textClass: 'text-yellow-500' },
-  'Água': { icon: Droplets, colorClass: 'bg-cyan-500', textClass: 'text-cyan-500' },
-  'Internet': { icon: Wifi, colorClass: 'bg-purple-500', textClass: 'text-purple-500' },
-  'Segurança Social': { icon: Shield, colorClass: 'bg-indigo-500', textClass: 'text-indigo-500' },
-  'Salário': { icon: Banknote, colorClass: 'bg-orange-500', textClass: 'text-orange-500' },
-  'Freelancer': { icon: User, colorClass: 'bg-pink-500', textClass: 'text-pink-500' },
-  'Chinês': { icon: Utensils, colorClass: 'bg-red-500', textClass: 'text-red-500' },
-  'Decoração': { icon: Palette, colorClass: 'bg-teal-500', textClass: 'text-teal-500' },
-  'Outros': { icon: MoreHorizontal, colorClass: 'bg-gray-500', textClass: 'text-gray-500' },
+  'Mercado': { icon: ShoppingCart, colorClass: 'bg-success', textClass: 'text-success' },
+  'Peixe': { icon: Fish, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
+  'Refrielvas': { icon: Leaf, colorClass: 'bg-success', textClass: 'text-success' },
+  'Energia': { icon: Zap, colorClass: 'bg-accent', textClass: 'text-accent' },
+  'Água': { icon: Droplets, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
+  'Internet': { icon: Wifi, colorClass: 'bg-primary', textClass: 'text-primary' },
+  'Segurança Social': { icon: Shield, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
+  'Salário': { icon: Banknote, colorClass: 'bg-primary', textClass: 'text-primary' },
+  'Freelancer': { icon: User, colorClass: 'bg-primary', textClass: 'text-primary' },
+  'Chinês': { icon: Utensils, colorClass: 'bg-primary', textClass: 'text-primary' },
+  'Decoração': { icon: Palette, colorClass: 'bg-success', textClass: 'text-success' },
+  'Outros': { icon: MoreHorizontal, colorClass: 'bg-muted-foreground', textClass: 'text-muted-foreground' },
 };
 
 export function ExpenseBreakdown({ despesas }: ExpenseBreakdownProps) {
@@ -55,8 +55,8 @@ export function ExpenseBreakdown({ despesas }: ExpenseBreakdownProps) {
     }));
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-soft animate-fade-in" style={{ animationDelay: '250ms' }}>
-      <h3 className="text-lg font-semibold font-display mb-4">Despesas por Categoria</h3>
+    <div className="border-t border-border py-5 animate-fade-in" style={{ animationDelay: '250ms' }}>
+      <h3 className="text-2xl font-display uppercase mb-4">Despesas por Categoria</h3>
       
       {items.length === 0 ? (
         <p className="text-muted-foreground text-sm text-center py-4">Nenhuma despesa registrada</p>
@@ -86,7 +86,7 @@ export function ExpenseBreakdown({ despesas }: ExpenseBreakdownProps) {
               >
                 <div className="flex items-center gap-3">
                   <div className={cn('p-2 rounded-lg', item.colorClass, 'bg-opacity-20')}>
-                    <item.icon className={cn('h-4 w-4', item.textClass)} />
+                    <item.icon className="h-4 w-4 text-background" />
                   </div>
                   <span className="font-medium">{item.label}</span>
                 </div>

@@ -7,7 +7,8 @@ import { PasswordInput } from '@/components/PasswordInput';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import logoSrc from '@/assets/yummi-logo.png';
+import { YummiBrand } from '@/components/YummiBrand';
+import { AuthShell } from '@/components/AuthShell';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -52,11 +53,11 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="text-center">
-          <img src={logoSrc} alt="Yummi Sushi" className="mx-auto h-20 w-auto object-contain mb-2" />
-          <CardTitle className="text-2xl font-bold">Nova senha</CardTitle>
+    <AuthShell>
+      <Card className="w-full border-border bg-card/95 shadow-elegant backdrop-blur-md">
+        <CardHeader className="text-center space-y-5">
+          <YummiBrand centered />
+          <CardTitle className="text-3xl font-normal uppercase">Nova senha</CardTitle>
         </CardHeader>
         <CardContent>
           {linkError && !ready ? (
@@ -79,6 +80,6 @@ export default function ResetPassword() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </AuthShell>
   );
 }

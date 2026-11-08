@@ -57,7 +57,7 @@ export function CollaboratorManager() {
           <TableCell>{person.is_active && <Button variant="ghost" size="icon" aria-label={`Excluir ${person.full_name || 'colaborador'}`} title="Excluir colaborador" onClick={() => setRemoving(person)}><Trash2 className="h-4 w-4 text-destructive" /></Button>}</TableCell>
         </TableRow>)}</TableBody></Table>
     </div>}
-    <Dialog open={adding} onOpenChange={(open) => { if (!busy) setAdding(open); }}><DialogContent className="max-w-md"><DialogHeader><DialogTitle>Incluir colaborador</DialogTitle><DialogDescription>Convite de acesso ao Yummi Sushi</DialogDescription></DialogHeader>
+    <Dialog open={adding} onOpenChange={(open) => { if (!busy) setAdding(open); }}><DialogContent className="max-w-md"><DialogHeader><DialogTitle>Incluir colaborador</DialogTitle><DialogDescription>Convite de acesso ao Yummi Finanças</DialogDescription></DialogHeader>
       <form onSubmit={invite} className="space-y-4">
         <div className="space-y-2"><Label htmlFor="collaborator-name">Nome</Label><Input id="collaborator-name" required minLength={2} maxLength={120} value={name} onChange={(e) => setName(e.target.value)} /></div>
         <div className="space-y-2"><Label htmlFor="collaborator-email">Email</Label><Input id="collaborator-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>

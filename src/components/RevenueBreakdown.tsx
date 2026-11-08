@@ -1,4 +1,4 @@
-import { Banknote, CreditCard, Smartphone, FileText } from 'lucide-react';
+import { Banknote, CreditCard, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface RevenueBreakdownProps {
@@ -22,13 +22,12 @@ export function RevenueBreakdown({ dinheiro, cartao, pix, boleto }: RevenueBreak
   const items = [
     { label: 'Dinheiro', value: dinheiro, icon: Banknote, colorClass: 'bg-cash', textClass: 'text-cash' },
     { label: 'Cartão', value: cartao, icon: CreditCard, colorClass: 'bg-cardPayment', textClass: 'text-cardPayment' },
-    { label: 'PIX', value: pix, icon: Smartphone, colorClass: 'bg-pix', textClass: 'text-pix' },
-    { label: 'Boleto', value: boleto, icon: FileText, colorClass: 'bg-boleto', textClass: 'text-boleto' },
+    ...(pix + boleto > 0 ? [{ label: 'Métodos anteriores', value: pix + boleto, icon: History, colorClass: 'bg-muted-foreground', textClass: 'text-muted-foreground' }] : []),
   ];
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-soft animate-fade-in" style={{ animationDelay: '200ms' }}>
-      <h3 className="text-lg font-semibold font-display mb-4">Receitas por Método</h3>
+    <div className="border-t border-border py-5 animate-fade-in" style={{ animationDelay: '200ms' }}>
+      <h3 className="text-2xl font-display uppercase mb-4">Receitas por Método</h3>
       
       {/* Progress bar */}
       <div className="h-3 rounded-full bg-muted overflow-hidden flex mb-6">
@@ -54,7 +53,7 @@ export function RevenueBreakdown({ dinheiro, cartao, pix, boleto }: RevenueBreak
           >
             <div className="flex items-center gap-3">
               <div className={cn('p-2 rounded-lg', item.colorClass, 'bg-opacity-20')}>
-                <item.icon className={cn('h-4 w-4', item.textClass)} />
+                <item.icon className="h-4 w-4 text-background" />
               </div>
               <span className="font-medium">{item.label}</span>
             </div>

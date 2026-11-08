@@ -10,6 +10,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Transaction, PaymentMethod } from '@/types/finance';
 import { Plus, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PAYMENT_OPTIONS, isActivePaymentMethod } from '@/lib/payment-methods';
 
 type IncomeCategory = 'vendas_restaurante' | 'vendas_ixpressum' | 'outros';
 type ExpenseCategory = 'mercado' | 'peixe' | 'refrielvas' | 'energia' | 'agua' | 'internet' | 'seguranca_social' | 'salario' | 'freelancer' | 'chines' | 'decoracao' | 'outros';
@@ -63,7 +64,7 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
         : EXPENSE_CATEGORIES.find(c => c.value === expenseCategory)?.label || '';
     }
     
-    if (!finalDescription || !amount || !selectedDate) return;
+    if (!finalDescription || !amount || !selectedDate || !isActivePaymentMethod(paymentMethod)) return;
 
     const formattedDate = format(selectedDate, 'yyyy-MM-dd');
     
@@ -81,8 +82,8 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-5 shadow-soft animate-fade-in" style={{ animationDelay: '100ms' }}>
-      <h3 className="text-lg font-semibold font-display mb-4">Nova Transação</h3>
+    <form onSubmit={handleSubmit} className="border-t border-border py-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
+      <h3 className="text-2xl font-display uppercase mb-5">Nova Transação</h3>
       
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <div className="space-y-2">
@@ -153,7 +154,7 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
         <div className="space-y-2">
           <Label htmlFor="type">Tipo</Label>
           <Select value={type} onValueChange={(v: 'receita' | 'despesa') => setType(v)}>
-            <SelectTrigger className="bg-background">
+            <SelectTrigger id="payment" className="bg-background">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -170,10 +171,7 @@ export function TransactionForm({ onAdd, selectedMonth }: TransactionFormProps) 
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="dinheiro">Dinheiro</SelectItem>
-              <SelectItem value="cartao">Cartão</SelectItem>
-              <SelectItem value="pix">PIX</SelectItem>
-              <SelectItem value="boleto">Boleto</SelectItem>
+              {PAYMENT_OPTIONS.map(option => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>

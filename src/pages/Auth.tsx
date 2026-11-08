@@ -7,8 +7,8 @@ import { PasswordInput } from '@/components/PasswordInput';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import logoSrc from '@/assets/yummi-logo.png';
-const logo = { url: logoSrc };
+import { YummiBrand } from '@/components/YummiBrand';
+import { AuthShell } from '@/components/AuthShell';
 import { Loader2, Mail, Lock } from 'lucide-react';
 
 function traduzirErro(msg?: string) {
@@ -74,12 +74,11 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-1 text-center">
-          <img src={logo.url} alt="Yummi Sushi" className="mx-auto h-20 w-auto object-contain mb-2" />
-          <CardTitle className="text-2xl font-bold">Entrar</CardTitle>
-          <CardDescription>Entre com suas credenciais para acessar</CardDescription>
+    <AuthShell>
+      <Card className="w-full border-border bg-card/95 shadow-elegant backdrop-blur-md">
+        <CardHeader className="space-y-5 text-center pb-6">
+          <YummiBrand centered />
+          <CardTitle className="text-3xl font-normal uppercase">Entrar</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,9 +114,10 @@ export default function Auth() {
               </div>
             </div>
 
-            <button
+            <Button
               type="button"
-              className="text-sm text-primary hover:underline"
+              variant="link"
+              className="h-auto px-0 text-sm text-primary"
               onClick={async () => {
                 if (!email) {
                   toast({ title: 'Indique o email', description: 'Escreva o seu email acima primeiro.', variant: 'destructive' });
@@ -130,7 +130,7 @@ export default function Auth() {
               }}
             >
               Esqueci a senha
-            </button>
+            </Button>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Entrar
@@ -138,6 +138,6 @@ export default function Auth() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </AuthShell>
   );
 }

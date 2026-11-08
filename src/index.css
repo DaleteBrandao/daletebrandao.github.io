@@ -2,87 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7EPCw.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E3_-gc4A.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8c4A.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E3t-4c4A.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/bebasneue/v16/JTUSjIg69CK48gW7PXooxW4.ttf) format('truetype');
+}
 
 @layer base {
-  :root {
-    --background: 30 20% 98%;
-    --foreground: 0 0% 10%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-
-    --primary: 18 88% 58%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 35 100% 96%;
-    --secondary-foreground: 0 0% 10%;
-
-    --muted: 30 15% 94%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 40 85% 55%;
-    --accent-foreground: 0 0% 10%;
-
-    --success: 145 60% 40%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 30 20% 88%;
-    --input: 30 20% 88%;
-    --ring: 18 88% 58%;
-
-    --radius: 0.75rem;
-
-    --cash: 145 60% 40%;
-    --card-payment: 220 70% 50%;
-    --pix: 170 70% 45%;
-    --boleto: 35 80% 50%;
-    --ixpressum: 280 70% 55%;
-
-    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.08);
-    --shadow-elegant: 0 10px 40px -10px hsl(18 88% 58% / 0.2);
-
-    --font-display: 'Noto Sans JP', sans-serif;
-    --font-body: 'Outfit', sans-serif;
-  }
-
-  .dark {
-    --background: 0 0% 8%;
-    --foreground: 30 20% 95%;
-
-    --card: 0 0% 12%;
-    --card-foreground: 30 20% 95%;
-
-    --popover: 0 0% 12%;
-    --popover-foreground: 30 20% 95%;
-
-    --primary: 18 88% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 30 20% 95%;
-
-    --muted: 0 0% 18%;
-    --muted-foreground: 30 10% 60%;
-
-    --accent: 40 85% 55%;
-    --accent-foreground: 0 0% 10%;
-
-    --success: 145 60% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 18 88% 60%;
+  :root, .dark {
+    --background: 255 4% 9%;
+    --foreground: 0 0% 96%;
+    --card: 255 3% 13%;
+    --card-foreground: 0 0% 96%;
+    --popover: 255 3% 13%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 20 96% 65%;
+    --primary-foreground: 255 4% 9%;
+    --secondary: 255 3% 18%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 255 3% 18%;
+    --muted-foreground: 255 3% 70%;
+    --accent: 47 100% 54%;
+    --accent-foreground: 255 4% 9%;
+    --success: 151 48% 62%;
+    --success-foreground: 255 4% 9%;
+    --destructive: 4 76% 68%;
+    --destructive-foreground: 255 4% 9%;
+    --border: 255 3% 24%;
+    --input: 255 3% 29%;
+    --ring: 20 96% 65%;
+    --radius: 0.25rem;
+    --cash: 151 48% 62%;
+    --card-payment: 202 71% 67%;
+    --pix: 255 3% 70%;
+    --boleto: 255 3% 70%;
+    --ixpressum: 255 3% 70%;
+    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.2);
+    --shadow-elegant: 0 24px 60px -24px hsl(0 0% 0% / 0.9);
+    --auth-photo-overlay: linear-gradient(to top, hsl(255 4% 6% / 0.96), hsl(255 4% 6% / 0.58));
+    --font-display: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', system-ui, sans-serif;
   }
 }
 
@@ -97,6 +86,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    letter-spacing: 0;
   }
 }
 
@@ -118,10 +108,15 @@
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(12 80% 45%) 100%);
+    background: hsl(var(--primary));
   }
 
   .gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(35 90% 50%) 100%);
+    background: hsl(var(--accent));
   }
+}
+
+.auth-photo-overlay { background: var(--auth-photo-overlay); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
