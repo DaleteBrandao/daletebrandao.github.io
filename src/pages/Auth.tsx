@@ -50,38 +50,17 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        toast({
-          title: 'Bem-vindo!',
-          description: 'Login realizado com sucesso.',
-        });
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              full_name: fullName,
-            },
-          },
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: 'Conta criada!',
-          description: 'Confirme o seu email clicando no link que enviámos e depois entre.',
-        });
-        setIsLogin(true);
-      }
+      toast({
+        title: 'Bem-vindo!',
+        description: 'Login realizado com sucesso.',
+      });
     } catch (error: any) {
       console.error('Auth error:', error);
       toast({
