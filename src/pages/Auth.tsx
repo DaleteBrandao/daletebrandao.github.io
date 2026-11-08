@@ -78,35 +78,11 @@ export default function Auth() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-1 text-center">
           <img src={logo.url} alt="Yummi Sushi" className="mx-auto h-20 w-auto object-contain mb-2" />
-          <CardTitle className="text-2xl font-bold">
-            {isLogin ? 'Entrar' : 'Criar Conta'}
-          </CardTitle>
-          <CardDescription>
-            {isLogin 
-              ? 'Entre com suas credenciais para acessar'
-              : 'Preencha os dados para criar sua conta'}
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">Entrar</CardTitle>
+          <CardDescription>Entre com suas credenciais para acessar</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Nome Completo</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="Seu nome"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="pl-10"
-                    required={!isLogin}
-                  />
-                </div>
-              </div>
-            )}
-            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
