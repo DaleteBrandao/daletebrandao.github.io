@@ -7,6 +7,7 @@ import { RevenueBreakdown } from '@/components/RevenueBreakdown';
 import { ExpenseBreakdown } from '@/components/ExpenseBreakdown';
 import { TransactionForm } from '@/components/TransactionForm';
 import { TransactionTable } from '@/components/TransactionTable';
+import { CollaboratorManager } from '@/components/CollaboratorManager';
 import { MonthSelector } from '@/components/MonthSelector';
 import { FinanceChart } from '@/components/FinanceChart';
 import { Button } from '@/components/ui/button';
@@ -161,6 +162,7 @@ const Index = () => {
             <section>
               <TransactionTable transactions={transactions} onRemove={removeTransaction} onUpdate={updateTransaction} showAmounts={isAdmin} />
             </section>
+            {isAdmin && <CollaboratorManager />}
           </>
         )}
       </main>
